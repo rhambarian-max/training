@@ -61,9 +61,43 @@ def split_sentences(paragraph, max_chars=400):
 
 # ---------------------------------------------------------------- checks
 
+MONTHS = {
+    # Armenian (genitive), Russian (genitive) and English month names, by month number.
+    **{m: i for i, m in enumerate("հունվարի փետրվարի մարտի ապրիլի մայիսի հունիսի հուլիսի օգոստոսի "
+                                  "սեպտեմբերի հոկտեմբերի նոյեմբերի դեկտեմբերի".split(), 1)},
+    **{m: i for i, m in enumerate("января февраля марта апреля мая июня июля августа "
+                                  "сентября октября ноября декабря".split(), 1)},
+    **{m: i for i, m in enumerate("january february march april may june july august "
+                                  "september october november december".split(), 1)},
+}
+MONTH = "|".join(sorted(MONTHS, key=len, reverse=True))
+DATE_PATTERNS = [
+    # 15.03.2026, 15/03/2026
+    (re.compile(r"\b(\d{1,2})[./](\d{1,2})[./](\d{4})\b"), lambda m: (m[1], m[2], m[3])),
+    # 15 марта 2026, 15 March 2026
+    (re.compile(rf"\b(\d{{1,2}})\s+({MONTH})\s+(\d{{4}})", re.I), lambda m: (m[1], MONTHS[m[2].lower()], m[3])),
+    # March 15, 2026
+    (re.compile(rf"\b({MONTH})\s+(\d{{1,2}}),?\s+(\d{{4}})", re.I), lambda m: (m[2], MONTHS[m[1].lower()], m[3])),
+    # 2026 թ. մարտի 15, 2026 թվականի մարտի 15-ին
+    (re.compile(rf"\b(\d{{4}})\s*թ\S*\s+({MONTH})\s+(\d{{1,2}})", re.I), lambda m: (m[3], MONTHS[m[2].lower()], m[1])),
+]
+
+
 def numbers(text):
-    """Digits of every number in the text, separators removed, so 1 000,50 and 1,000.50 compare equal."""
-    return Counter(re.sub(r"\D", "", m) for m in NUMBER.findall(text))
+    """Dates and numbers in the text, normalised so they compare across languages.
+
+    Dates become "date:D.M.YYYY" whether written 15.03.2026, 15 марта 2026 or 15 March 2026.
+    Other numbers lose their separators, so 1 000,50 and 1,000.50 compare equal.
+    """
+    found = Counter()
+    for pattern, parts in DATE_PATTERNS:
+        def take(m):
+            d, mo, y = parts(m)
+            found[f"date:{int(d)}.{int(mo)}.{y}"] += 1
+            return " "
+        text = pattern.sub(take, text)
+    found.update(re.sub(r"\D", "", m) for m in NUMBER.findall(text))
+    return found
 
 
 def words(text):

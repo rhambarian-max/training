@@ -22,9 +22,9 @@ hy	ru	en
 տոկոսադրույք	процентная ставка; ставка	interest rate; rate
 փաստացի տոկոսադրույք	эффективная процентная ставка	effective interest rate
 տոկոս	процент	interest; percent
-մայր գումար	основная сумма	principal
-մարում; մարման	погашение	repayment
-վաղաժամկետ մարում; վաղաժամկետ մարման	досрочное погашение	early repayment; prepayment
+մայր գումար	основная сумма; основной долг	principal
+մարում; մարման	погашение; платеж	repayment; payment; installment
+վաղաժամկետ մարում; վաղաժամկետ մարման	досрочное погашение; досрочный	early repayment; prepayment
 մարման ժամանակացույց	график погашения	repayment schedule
 ժամկետանց	просроч	overdue; past due
 պարտք; պարտքի	долг; задолженность	debt
@@ -79,3 +79,25 @@ hy	ru	en
 Կենտրոնական բանկ	Центральный банк	Central Bank
 Ֆինանսական համակարգի հաշտարար	Примиритель финансовой системы	Financial System Mediator
 ՀՀ	РА	RA; Republic of Armenia
+հերթական մարում; հերթական մարման	очередной платеж	scheduled installment; installment
+ավելցուկ	излишек; остаток; оставшаяся часть	excess; remaining amount
+մուտքագրված գումար	введенная сумма; внесенная сумма	amount entered
+մնացորդային պարտք	остаток задолженности; остаток долга	outstanding balance
+վարկի սպասարկում	обслуживание кредита	loan servicing
+տոկոսագումար	проценты; сумма процентов	interest; interest amount
+վարկային պարտավորություն	кредитное обязательство	loan obligation; credit obligation
+հավելված	приложение	app; application; annex
+առցանց բանկինգ; ինտերնետ բանկինգ	интернет-банк; онлайн-банк	online banking; internet banking
+բջջային բանկինգ	мобильный банк	mobile banking
+գաղտնաբառ	пароль	password
+նույնականացում	идентификация	identification; authentication
+հաստատել	подтверд	confirm
+չեղարկել	отмен	cancel
+սակագին	тариф	tariff; rate
+սակագներ	тарифы	tariffs; fees
+հաշվի բացում; հաշվի բացման	открытие счета	account opening
+հաշվի փակում; հաշվի փակման	закрытие счета	account closure
+քարտապան	держатель карты	cardholder
+արգելափակում	блокировк	block; blocking
+ժամկետ	срок	term; period
+մարման օր	дата платежа; день погашения	payment date; due date; due

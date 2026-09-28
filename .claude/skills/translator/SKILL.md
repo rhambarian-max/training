@@ -1,9 +1,19 @@
 ---
 name: translator
-description: Translate Armenian (hy) banking and financial texts and files (loan and deposit agreements, account statements, tariffs, Central Bank regulations, AML/KYC documents, bank correspondence, .txt or .docx) into Russian, English, or both, using open-source models that run locally so client data stays on the machine. Uses a banking glossary and checks that every amount, rate, date and account number is carried over. Use when the user gives Armenian banking or financial text and wants it in Russian and/or English. Not for translating into Armenian or between Russian and English.
+description: Translate Armenian (hy) banking and financial texts and files (loan and deposit agreements, account statements, tariffs, app and interface texts, Central Bank regulations, AML/KYC documents, client letters, .txt or .docx) into Russian, English, or both, in the style of a Russian- or English-speaking bank. Claude translates by default, following a banking style guide, glossary and reference translations, then checks every amount, rate, date and term with a script; local open-source models (NLLB-200, OPUS-MT) are available when the text must not leave the machine. Use when the user gives Armenian banking or financial text and wants it in Russian and/or English. Not for translating into Armenian or between Russian and English.
 ---
 
 # Banking translator: Armenian → Russian / English
+
+## Two modes
+
+| Mode | Who translates | When |
+|---|---|---|
+| **Claude (default)** | Claude, in this session, following `references/style-guide.md`, `glossary.tsv` and `references/examples.md` | Normally. Much better quality than the local models, especially for Armenian. |
+| **Local** | Open-source models on this machine (`scripts/translate.py`) | When the user says the text must not leave their machine (e.g. real client data under banking secrecy), or asks for local/offline translation. Claude then reviews the output. |
+
+In both modes the result is checked with `scripts/check.py` (numbers, dates and glossary terms)
+and reviewed against the style guide.
 
 Translates **Armenian (hy)** banking and financial texts into **Russian (ru)**, **English (en)**,
 or both at once. Typical inputs: loan, deposit and guarantee agreements, account statements,
@@ -14,15 +24,20 @@ Armenian is the only source language. The script refuses input that is not mostl
 
 ## Confidentiality
 
-Banking texts contain client names, account numbers, amounts and other data covered by
-**banking secrecy** (ՀՀ «Բանկային գաղտնիքի մասին» օրենք). That is why translation runs on
-local open-source models: the text never leaves the machine.
+Banking texts can contain client names, account numbers, amounts and other data covered by
+**banking secrecy** (ՀՀ «Բանկային գաղտնիքի մասին» օրենք). In Claude mode the text is processed
+by Claude, like anything else shared in this conversation; in local mode it never leaves the machine.
+
+- If the text contains real client data (names, passport data, account numbers, balances) and the
+  user has not said Claude mode is acceptable, say so briefly and offer local mode or masking
+  (replace names and account numbers with placeholders like [CLIENT], [ACCOUNT] before translating).
 
 - Never send the text, or pieces of it, to online translators, web search or any other external service.
+  Terms may be looked up on the web, but never whole sentences with client data.
 - Do not copy client data into commit messages, issues, published pages or other shared places.
 - Keep translated files next to the originals (or where the user says), not in public folders.
 
-## Engines
+## Local mode: engines
 
 | Engine | Model | License | Notes |
 |---|---|---|---|
@@ -33,7 +48,7 @@ local open-source models: the text never leaves the machine.
 **License:** NLLB is licensed for non-commercial use only. For translating a bank's working
 documents as part of its business, use `--engine opus`, or have the bank's legal team confirm NLLB is acceptable.
 
-## Setup (once)
+## Local mode: setup (once)
 
 ```bash
 pip install -r .claude/skills/translator/scripts/requirements.txt
@@ -41,7 +56,7 @@ pip install -r .claude/skills/translator/scripts/requirements.txt
 
 The first run downloads the model from Hugging Face into the Hugging Face cache. After that it works offline.
 
-## Usage
+## Local mode: usage
 
 ```bash
 S=.claude/skills/translator/scripts/translate.py
@@ -72,14 +87,23 @@ pdf or xlsx skill), translate it, then rebuild the document if needed.
 
 ### Automatic checks
 
-After translating, the script compares each paragraph with the source and prints `[review]` lines on stderr:
+`translate.py` checks its own output and prints `[review]` lines on stderr. To check any translation
+(for example one Claude wrote), save the source and translations to files and run:
+
+```bash
+python .claude/skills/translator/scripts/check.py --source src.hy.txt --ru out.ru.txt --en out.en.txt
+```
+
+Put temporary files in the scratchpad, not in the repository. Both scripts compare paragraph by paragraph:
 
 - **Numbers:** every amount, rate, date and account number in the source must appear in the
-  translation. Separators are ignored, so `1 500 000,50` and `1,500,000.50` count as the same number.
+  translation. Separators are ignored, so `1 500 000,50` and `1,500,000.50` count as the same number,
+  and dates match across formats (`25.10.2026`, `2026 թ. հոկտեմբերի 25`, `25 октября 2026`, `25 October 2026`).
 - **Terminology:** if a term from `glossary.tsv` is in the source, the expected Russian/English
   term must be in the translation.
 
-The checks can raise false alarms (for example a date rewritten as "15 March 2026"). Check every warning by hand.
+The checks can raise false alarms (for example a correct synonym missing from the glossary). Check every
+warning by hand, and add correct variants to the glossary when a false alarm repeats.
 
 ## Glossary
 
@@ -93,12 +117,16 @@ since the check matches Armenian words exactly.
 
 1. Confirm the text is Armenian. If the user did not say which language they want, translate into
    both Russian and English.
-2. Run `translate.py`. If dependencies are missing, install them from `requirements.txt`. If the
-   model cannot be downloaded (no network to huggingface.co), tell the user, and offer to translate
-   the text yourself in this session instead, following the rules below.
-3. **Review the whole translation against the source**, starting with every `[review]` warning.
-   Fix errors and tell the user what you changed. Machine translation of banking text needs this step every time.
-4. Apply these banking rules in the review:
+2. Read `references/style-guide.md` and `references/examples.md`, and look up the source's terms in
+   `glossary.tsv`. Decide the text type (contract, interface, client letter, regulatory): it sets the register.
+3. Translate:
+   - **Claude mode (default):** translate the text yourself. Rebuild each sentence the way a Russian or
+     English bank would write it; do not copy the Armenian word order.
+   - **Local mode:** run `scripts/translate.py` (install `requirements.txt` first if needed). If the model
+     cannot be downloaded, tell the user and ask whether Claude mode is acceptable.
+     Treat the output as a rough draft and rewrite it to the style guide.
+4. Run `scripts/check.py` on the translation and resolve every `[review]` warning.
+5. Do the self-review in section 5 of the style guide, and apply these rules:
    - **Figures:** amounts, rates, dates, terms (months/days), account numbers, IBAN, SWIFT/BIC, TIN
      and contract numbers must match the source exactly. Never round or convert.
    - **Number format:** Russian `1 500 000,50`; English `1,500,000.50`. Percentages: `12,5%` / `12.5%`.
@@ -117,9 +145,12 @@ since the check matches Armenian words exactly.
    - **Personal names:** transliterate consistently (Գևորգ → Геворг / Gevorg), matching the
      passport spelling if the document gives one.
    - **Address:** client letters use the formal "you": Armenian դուք/Դուք → Russian Вы.
-5. The models are trained mostly on **Eastern Armenian**. Warn if the source is Western Armenian
-   or classical orthography, and review more carefully.
-6. Deliver the Russian translation first, then the English one, then short notes: changes you made
-   to the machine output, ambiguous terms, and anything left untranslated.
-7. Machine translation is **not a certified translation**. Say so when a document looks legally
+6. The style guide and the local models assume **Eastern Armenian** in reformed orthography. If the
+   source is Western Armenian or classical orthography, say so and review more carefully.
+7. Deliver the Russian translation first, then the English one, then short notes: ambiguous
+   terms, choices the user may want to change (e.g. a button label), and anything left untranslated.
+   Keep notes short.
+8. When the user corrects or approves a translation, offer to add it to `references/examples.md`
+   and any new terms to `glossary.tsv`, so later translations follow it.
+9. These translations (Claude's or the models') are **not certified translations**. Say so when a document looks legally
    binding or is meant for a court, regulator or notary, since those need a sworn translator.
