@@ -1,0 +1,81 @@
+# Banking glossary: Armenian -> Russian -> English.
+# Columns are tab-separated. In each cell the first entry is the preferred term;
+# entries after ";" are accepted variants (inflected Armenian forms, synonyms).
+# translate.py uses this file to flag sentences where the expected term is missing.
+hy	ru	en
+վարկ; վարկի; վարկը	кредит; заем; займ	loan; credit
+վարկառու	заемщик	borrower
+վարկատու	кредитор	lender; creditor
+վարկային պայմանագիր	кредитный договор	loan agreement; credit agreement
+վարկային գիծ	кредитная линия	credit line; line of credit
+վարկային պատմություն	кредитная история	credit history
+վարկային բյուրո	кредитное бюро	credit bureau
+վարկանիշ	рейтинг	rating; credit rating
+հիփոթեքային վարկ	ипотечный кредит	mortgage loan; mortgage
+օվերդրաֆտ	овердрафт	overdraft
+ավանդ; ավանդի	депозит; вклад	deposit
+ավանդատու	вкладчик	depositor
+բանկային ավանդի պայմանագիր	договор банковского вклада	deposit agreement
+բանկային հաշիվ; բանկային հաշվ	банковский счет	bank account
+ընթացիկ հաշիվ; ընթացիկ հաշվ	текущий счет	current account
+հաշվեհամար	номер счета	account number
+տոկոսադրույք	процентная ставка; ставка	interest rate; rate
+փաստացի տոկոսադրույք	эффективная процентная ставка	effective interest rate
+տոկոս	процент	interest; percent
+մայր գումար	основная сумма	principal
+մարում; մարման	погашение	repayment
+վաղաժամկետ մարում; վաղաժամկետ մարման	досрочное погашение	early repayment; prepayment
+մարման ժամանակացույց	график погашения	repayment schedule
+ժամկետանց	просроч	overdue; past due
+պարտք; պարտքի	долг; задолженность	debt
+պարտավորություն	обязательство	liability; obligation
+գրավ	залог	collateral; pledge
+երաշխավոր	поручитель	guarantor
+երաշխավորություն	поручительство	surety; suretyship
+բանկային երաշխիք	банковская гарантия	bank guarantee
+ակրեդիտիվ	аккредитив	letter of credit
+տույժ	неустойка; пеня	penalty
+տուգանք	штраф	fine
+միջնորդավճար	комиссия	commission; fee
+սպասարկման վճար	плата за обслуживание	service fee; maintenance fee
+փոխանցում	перевод	transfer
+վճարում	платеж; оплата	payment
+վճարման հանձնարարական	платежное поручение	payment order
+քաղվածք	выписка	statement
+մնացորդ	остаток	balance
+փոխարժեք	курс	exchange rate
+արտարժույթ	иностранная валюта; валюта	foreign currency
+ՀՀ դրամ	драм	AMD; dram
+դրամական միջոցներ	денежные средства	funds; cash
+կանխիկ	наличн	cash
+անկանխիկ	безналичн	non-cash; cashless
+կանխիկացում	снятие наличных; обналичивание	cash withdrawal
+վճարային քարտ	платежная карта; карта	payment card; card
+բանկոմատ	банкомат	ATM
+դրամարկղ	касса	cash desk
+մասնաճյուղ	филиал	branch
+գործարք	сделка; операция	transaction
+հաճախորդ	клиент	customer; client
+պատշաճ ուսումնասիրություն	надлежащая проверка	due diligence
+փողերի լվացում	отмывание денег; легализация	money laundering
+ահաբեկչության ֆինանսավորում	финансирование терроризма	terrorist financing; financing of terrorism
+բանկային գաղտնիք	банковская тайна	bank secrecy; banking secrecy
+լիազորագիր	доверенность	power of attorney
+արգելանք	арест	seizure; attachment; freeze
+ապահովագրություն	страхование	insurance
+իրացվելիություն	ликвидность	liquidity
+կապիտալի համարժեքություն	достаточность капитала	capital adequacy
+ակտիվ	актив	asset
+հաշվեկշիռ	баланс	balance sheet
+շահույթ	прибыль	profit
+ֆինանսական հաշվետվություն	финансовая отчетность	financial statements; financial reporting
+պահուստ	резерв	reserve; provision
+արժեթուղթ	ценн бумаг	security; securities
+պարտատոմս	облигаци	bond
+բաժնետոմս	акци	share; stock
+լիզինգ	лизинг	leasing; lease
+ֆակտորինգ	факторинг	factoring
+առևտրային բանկ	коммерческий банк	commercial bank
+Կենտրոնական բանկ	Центральный банк	Central Bank
+Ֆինանսական համակարգի հաշտարար	Примиритель финансовой системы	Financial System Mediator
+ՀՀ	РА	RA; Republic of Armenia
