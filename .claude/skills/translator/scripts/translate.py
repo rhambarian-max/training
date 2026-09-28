@@ -30,7 +30,8 @@ GLOSSARY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 # Sentence ends: Latin punctuation and the Armenian full stop (U+0589 "։").
 # The Armenian question/exclamation marks sit inside the word, so "։" and "." end the sentence.
 # A "." between digits (1.5, 15.03.2025) is not a sentence end because it is not followed by space.
-SENTENCE_END = re.compile(r"(?<=[.!?։…])\s+")
+# Many people type a plain ":" instead of "։", so ":" right after an Armenian letter also ends a sentence.
+SENTENCE_END = re.compile(r"(?:(?<=[.!?։…])|(?<=[Ա-Ֆա-և]:))\s+")
 
 # Numbers with thousands separators (1 000 000, 1,000,000) and decimals (12,5 / 12.5).
 NUMBER = re.compile(r"\d{1,3}(?:[   .,]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?")
