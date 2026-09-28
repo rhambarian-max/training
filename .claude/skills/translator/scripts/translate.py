@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Translate between Armenian (hy), Russian (ru) and English (en) with open-source models.
+"""Translate Armenian (hy) text into Russian (ru) and/or English (en) with open-source models.
 
 Engines:
   nllb       facebook/nllb-200-distilled-600M (default, CC-BY-NC-4.0)
   nllb-1.3b  facebook/nllb-200-distilled-1.3B (CC-BY-NC-4.0)
-  opus       Helsinki-NLP/opus-mt-{src}-{tgt} (CC-BY-4.0 / Apache-2.0), pivots when a pair is missing
+  opus       Helsinki-NLP/opus-mt-hy-{ru,en} (CC-BY-4.0 / Apache-2.0); hy->en pivots through Russian if needed
 """
 import argparse
 import re
 import sys
 
-LANGS = ("hy", "ru", "en")
+SRC = "hy"
+TARGETS = ("ru", "en")
 NAMES = {"hy": "Armenian", "ru": "Russian", "en": "English"}
 NLLB_CODES = {"hy": "hye_Armn", "ru": "rus_Cyrl", "en": "eng_Latn"}
 NLLB_MODELS = {
@@ -18,24 +19,16 @@ NLLB_MODELS = {
     "nllb-1.3b": "facebook/nllb-200-distilled-1.3B",
 }
 
-# Sentence ends: Latin/Cyrillic punctuation and the Armenian full stop (U+0589 "։").
+# Sentence ends: Latin punctuation and the Armenian full stop (U+0589 "։").
 # The Armenian question/exclamation marks sit inside the word, so "։" and "." end the sentence.
 SENTENCE_END = re.compile(r"(?<=[.!?։…])\s+")
 
 
-def detect_language(text):
-    counts = {"hy": 0, "ru": 0, "en": 0}
-    for ch in text:
-        if "Ա" <= ch <= "֏" or "ﬓ" <= ch <= "ﬗ":
-            counts["hy"] += 1
-        elif "Ѐ" <= ch <= "ӿ":
-            counts["ru"] += 1
-        elif ch.isascii() and ch.isalpha():
-            counts["en"] += 1
-    best = max(counts, key=counts.get)
-    if counts[best] == 0:
-        sys.exit("Could not detect the source language; pass --from.")
-    return best
+def armenian_share(text):
+    """Fraction of letters in the text that are Armenian."""
+    letters = [ch for ch in text if ch.isalpha()]
+    armenian = [ch for ch in letters if "Ա" <= ch <= "֏" or "ﬓ" <= ch <= "ﬗ"]
+    return len(armenian) / len(letters) if letters else 0.0
 
 
 def split_sentences(paragraph, max_chars=400):
@@ -56,7 +49,7 @@ class NllbEngine:
     def __init__(self, model_name, device, beams):
         from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, src_lang=NLLB_CODES[SRC])
         self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to(device)
         self.device = device
         self.beams = beams
@@ -103,20 +96,18 @@ class OpusEngine:
         pair = self._load(src, tgt)
         if pair:
             return self._direct(sentences, pair)
-        # No direct model: pivot through the third language.
-        pivot = next(l for l in LANGS if l not in (src, tgt))
-        first, second = self._load(src, pivot), self._load(pivot, tgt)
+        # No direct hy->en model: pivot through Russian (hy->ru and ru->en both exist).
+        first, second = self._load(src, "ru"), self._load("ru", tgt)
         if not (first and second):
-            sys.exit(f"No OPUS-MT model for {src}->{tgt}, directly or via {pivot}. Use --engine nllb.")
-        print(f"[opus] no direct {src}->{tgt} model, pivoting through {NAMES[pivot]}", file=sys.stderr)
+            sys.exit(f"No OPUS-MT model for {src}->{tgt}, directly or via Russian. Use --engine nllb.")
+        print(f"[opus] no direct {src}->{tgt} model, pivoting through Russian", file=sys.stderr)
         return self._direct(self._direct(sentences, first), second)
 
 
 def translate_text(engine, text, src, tgt, batch_size=16):
     """Translate paragraph by paragraph so blank-line layout is kept."""
-    paragraphs = re.split(r"(\n\s*\n)", text)
     result = []
-    for part in paragraphs:
+    for part in re.split(r"(\n\s*\n)", text):
         if not part.strip():
             result.append(part)
             continue
@@ -130,11 +121,11 @@ def translate_text(engine, text, src, tgt, batch_size=16):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("text", nargs="*", help="text to translate (default: --input or stdin)")
-    p.add_argument("--from", dest="src", default="auto", choices=("auto",) + LANGS)
-    p.add_argument("--to", dest="tgt", required=True, choices=LANGS + ("all",))
+    p.add_argument("text", nargs="*", help="Armenian text to translate (default: --input or stdin)")
+    p.add_argument("--to", dest="tgt", default="all", choices=TARGETS + ("all",),
+                   help="ru, en, or all for both (default: all)")
     p.add_argument("--engine", default="nllb", choices=("nllb", "nllb-1.3b", "opus"))
-    p.add_argument("--input", help="read text from this file")
+    p.add_argument("--input", help="read Armenian text from this file")
     p.add_argument("--output", help="write the translation to this file")
     p.add_argument("--device", default=None, help="cpu or cuda (default: cuda if available)")
     p.add_argument("--beams", type=int, default=4)
@@ -149,11 +140,10 @@ def main():
         text = sys.stdin.read()
     if not text.strip():
         sys.exit("Nothing to translate.")
+    if armenian_share(text) < 0.5:
+        sys.exit("The input does not look like Armenian. This skill translates from Armenian only.")
 
-    src = detect_language(text) if args.src == "auto" else args.src
-    targets = [l for l in LANGS if l != src] if args.tgt == "all" else [args.tgt]
-    if targets == [src]:
-        sys.exit(f"Source and target are both {NAMES[src]}.")
+    targets = list(TARGETS) if args.tgt == "all" else [args.tgt]
 
     import torch
 
@@ -165,8 +155,8 @@ def main():
 
     blocks = []
     for tgt in targets:
-        out = translate_text(engine, text, src, tgt)
-        blocks.append(f"[{NAMES[src]} -> {NAMES[tgt]}]\n{out}" if len(targets) > 1 else out)
+        out = translate_text(engine, text, SRC, tgt)
+        blocks.append(f"[{NAMES[tgt]}]\n{out}" if len(targets) > 1 else out)
     result = "\n\n".join(blocks)
 
     if args.output:
