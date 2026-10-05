@@ -44,7 +44,7 @@ is «очередной платеж» in an app but «очередной пла
   - «направить на погашение», not «направить на платеж по погашению»
   - «основной долг» / «основная сумма долга» (for մայր գումար)
   - «остаток задолженности», «очередной платеж», «досрочное погашение», «просроченная задолженность»
-  - «излишне уплаченная сумма» / «оставшаяся часть суммы»; «излишек» only in informal text
+  - for parts of an amount (ավել մաս, գերավճար, մնացորդ) see section 5
 - Client address in letters and app texts: «Вы», «Ваш» with a capital letter.
 
 ## 4. English specifics
@@ -58,12 +58,33 @@ is «очередной платеж» in an app but «очередной пла
 - Contracts: "shall", defined terms with capitals ("the Borrower", "the Loan Agreement").
   Interface texts: short, active voice, no "shall".
 
-## 5. Self-review before delivering
+## 5. Wording pitfalls
+
+A word for part of an amount must make clear **which part of the money** it means and what it is
+measured against. A vague word can point at the wrong money, and in a payment text that changes the meaning.
+
+| Armenian | Meaning | Russian | English | Do not use |
+|---|---|---|---|---|
+| ավել մասը, ավելցուկը (of a payment) | the part above the required payment | сумма, превышающая размер (очередного) платежа; сумма сверх (очередного) платежа | the amount exceeding the (scheduled) installment; any amount in excess of the installment | «излишек» (colloquial); «оставшаяся часть» / "remaining amount" (reads as the rest or main part of the money) |
+| գերավճար | money paid above what is owed | переплата; излишне уплаченная сумма | overpayment | «излишек» |
+| մնացորդ (of an account) | what is on the account | остаток (на счете) | balance | bare «остаток» for a loan |
+| մնացորդային պարտք | what is still owed on a loan | остаток задолженности | outstanding balance | "remaining debt" in formal text |
+
+When a phrase could point at more than one amount, name the reference amount explicitly
+(«сверх очередного платежа», "in excess of the installment"), even if the Armenian leaves it implicit.
+
+Statements of what the client does **not** claim or request (… պահանջ չեմ ներկայացնում) keep the
+negation and the legal verb: «не требую» / «не предъявляю требования», "I do not request" /
+"I make no claim". Do not turn them into a positive statement ("I agree that…") or a waiver
+("I waive…"), which changes the legal meaning.
+
+## 6. Self-review before delivering
 
 Read the translation on its own, as a native reader would, and then against the source:
 
 1. Would a Russian or English bank publish this wording as is? If a phrase sounds translated, rewrite it.
 2. Is every condition, number, date, party and exception from the source still there?
-3. Are the obligations as strong as in the source (shall/may/must not)?
-4. Are the terms consistent with `glossary.tsv` and within the document?
-5. Run `scripts/check.py` and resolve every warning.
+3. Does every word for part of an amount (excess, remainder, balance) point at the right money? See section 5.
+4. Are the obligations as strong as in the source (shall/may/must not)?
+5. Are the terms consistent with `glossary.tsv` and within the document?
+6. Run `scripts/check.py` and resolve every warning.

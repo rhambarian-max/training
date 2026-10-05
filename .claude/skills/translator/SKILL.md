@@ -107,7 +107,7 @@ warning by hand, and add correct variants to the glossary when a false alarm rep
 
 ## Glossary
 
-`glossary.tsv` (next to this file) lists about 75 banking terms: Armenian, Russian and English,
+`glossary.tsv` (next to this file) lists about 100 banking terms: Armenian, Russian and English,
 tab-separated, with the preferred term first and accepted variants after `;`. Use it as the
 reference for terminology when reviewing. When the user or the bank has its own preferred terms,
 add or change rows there. Keep the Armenian column's inflected forms (e.g. `մարում; մարման`),
@@ -126,7 +126,7 @@ since the check matches Armenian words exactly.
      cannot be downloaded, tell the user and ask whether Claude mode is acceptable.
      Treat the output as a rough draft and rewrite it to the style guide.
 4. Run `scripts/check.py` on the translation and resolve every `[review]` warning.
-5. Do the self-review in section 5 of the style guide, and apply these rules:
+5. Check the wording pitfalls (section 5) and do the self-review (section 6) of the style guide, and apply these rules:
    - **Figures:** amounts, rates, dates, terms (months/days), account numbers, IBAN, SWIFT/BIC, TIN
      and contract numbers must match the source exactly. Never round or convert.
    - **Number format:** Russian `1 500 000,50`; English `1,500,000.50`. Percentages: `12,5%` / `12.5%`.

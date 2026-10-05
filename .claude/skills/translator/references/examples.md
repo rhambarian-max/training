@@ -9,12 +9,15 @@ pairs when the user approves or corrects a translation.
 > Մարել կոճակը սեղմելով՝ ես համաձայնվում եմ, որ մուտքագրված գումարն ուղղվելու է վարկի առաջիկա հերթական մարմանը, իսկ ավել մասը ուղղվելու է հետագա մարումների մայր գումարների նվազեցմանը: Սույն մարումը չի համարվում վաղաժամկետ մարում:
 
 **Russian**
-> Нажимая кнопку «Погасить», я соглашаюсь с тем, что внесенная сумма будет направлена на погашение ближайшего очередного платежа по кредиту, а оставшаяся часть — на уменьшение основного долга по последующим платежам. Данное погашение не является досрочным.
+> Нажимая кнопку «Погасить», я соглашаюсь с тем, что внесенная сумма будет направлена на погашение ближайшего очередного платежа по кредиту, а сумма, превышающая размер очередного платежа, — на уменьшение основного долга по последующим платежам. Данное погашение не является досрочным.
 
 **English**
-> By tapping "Repay", I agree that the amount entered will be applied to the next scheduled loan installment, and any remaining amount will be used to reduce the principal of subsequent installments. This payment is not considered an early repayment.
+> By tapping "Repay", I agree that the amount entered will be applied to the next scheduled loan installment, and any amount exceeding that installment will be used to reduce the principal of subsequent installments. This payment is not considered an early repayment.
 
 Why: «направить на погашение» is the standard Russian phrase; no repeated «погашение»;
+ավել մասը is the part *above* the scheduled payment, so it is «сумма, превышающая размер очередного
+платежа» / "amount exceeding that installment" (not «излишек», which is colloquial, and not
+«оставшаяся часть» / "remaining amount", which reads as the rest or main part of the money);
 «основной долг» for մայր գումար; "installment" for հերթական մարում; "tapping" because it is a mobile app.
 
 ## 2. Loan agreement clause (contract)
